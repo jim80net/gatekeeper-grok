@@ -1,0 +1,17 @@
+{
+  "description": "agent-gatekeeper PreToolUse hard enforcer",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{GATEKEEPER_BIN}} --harness grok",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

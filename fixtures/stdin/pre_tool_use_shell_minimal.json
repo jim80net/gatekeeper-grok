@@ -1,0 +1,12 @@
+{
+  "hookEventName": "pre_tool_use",
+  "sessionId": "fixture",
+  "cwd": "/tmp",
+  "workspaceRoot": "/tmp",
+  "toolName": "Shell",
+  "toolInput": {
+    "command": "git push origin main",
+    "description": "protected-branch deny canary"
+  },
+  "permissionMode": "bypassPermissions"
+}
