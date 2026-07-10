@@ -1,0 +1,9 @@
+# Local editor / OS
+.DS_Store
+*.swp
+*~
+
+# Build artifacts (none yet; reserved for future thin packaging)
+/bin/
+/dist/
+*.exe
