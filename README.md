@@ -20,10 +20,11 @@ The installable multi-harness binary still ships from
 | Hook template | [`hooks/gatekeeper.json.template`](./hooks/gatekeeper.json.template) | Same shape as live fleet |
 | Golden fixtures | [`fixtures/`](./fixtures/) | Live-verified 2026-07-03 (grok 0.2.82) + re-canaried 2026-07-10 |
 
-Thin packaging (dedicated binary or pure-docs product) is **deferred** until the
-extract plan's evidence gate (release blast radius / mental model / fleet ops).
-Default recommendation: keep one multi-harness binary; this repo remains the
-Grok-specific product surface (docs + templates + fixtures).
+**Phase 3b decision (2026-07-11): unified binary — wont-split.**
+Evidence gate closed in `gatekeeper-flotilla/docs/EXTRACT-PLAN.md`: one
+multi-harness `claude-gatekeeper` remains the only install artifact; this repo
+stays the Grok-specific product surface (docs + templates + fixtures only).
+No dedicated Grok binary without a new CoS warrant.
 
 ## Install (fleet / operator)
 
