@@ -18,7 +18,7 @@ The installable multi-harness binary still ships from
 | Core engine | `gatekeeper-core` | `canonical` / `config` / `engine` |
 | Hook install | `claude-gatekeeper setup --harness grok` | Writes `~/.grok/hooks/gatekeeper.json` |
 | Hook template | [`hooks/gatekeeper.json.template`](./hooks/gatekeeper.json.template) | Same shape as live fleet |
-| Golden fixtures | [`fixtures/`](./fixtures/) | Live-verified 2026-07-03 (grok 0.2.82) + re-canaried 2026-07-10 |
+| Golden fixtures | [`fixtures/`](./fixtures/) | Shell live-verified on 0.2.82; seven current native shapes pinned from 0.2.101 shipped schemas |
 
 **Phase 3b decision (2026-07-11): unified binary — wont-split.**
 Evidence gate closed in `gatekeeper-flotilla/docs/EXTRACT-PLAN.md`: one
@@ -52,10 +52,15 @@ Full detail: [`docs/WIRE.md`](./docs/WIRE.md).
 | Direction | Shape |
 |-----------|--------|
 | **stdin** | camelCase envelope: `toolName`, `toolInput`, `hookEventName`=`pre_tool_use`, `cwd`/`workspaceRoot`, `permissionMode` |
-| **Shell tool name** | `"Shell"` (not `run_terminal_cmd`; that alias is kept defensively) |
+| **Shell tool name** | `"Shell"` in the 0.2.82 live capture; current 0.2.101 native name is `"run_terminal_command"` |
 | **deny** | stdout `{"decision":"deny","reason":"…"}` + **exit 2** |
 | **allow** | stdout `{"decision":"allow"}` + **exit 0** |
 | **abstain** | **no stdout** + **exit 1** (grok fail-open-on-error; no verdict asserted) |
+
+Current non-Shell fixture coverage includes Read, Edit, Write, ListDir/Glob,
+Grep, and WebFetch. Run `./scripts/verify-fixtures.sh` for the 10-second wire
+demo. WebSearch's native name is known, but its primary input key is explicitly
+unverified and is not guessed by the shipping adapter.
 
 Grok evaluates PreToolUse hooks **before** its permission system, including under
 `--always-approve` / `bypassPermissions`. Settings-layer `--deny` is a *different*

@@ -69,11 +69,15 @@ See [`../fixtures/stdin/pre_tool_use_shell_live.json`](../fixtures/stdin/pre_too
 
 | Grok `toolName` | Canonical tool | Status |
 |-----------------|----------------|--------|
-| `Shell` | `Bash` | **Live-verified** |
-| `run_terminal_cmd` | `Bash` | Defensive alias (design-era) |
-| `search_replace` | `Edit` | Design-inferred |
-| `read_file` | `Read` | Design-inferred |
-| `grep_search` | `Grep` | Design-inferred |
+| `Shell` | `Bash` | **Live-verified** (0.2.82) |
+| `run_terminal_command` | `Bash` | Shipped guide + schema-verified (0.2.101) |
+| `search_replace` | `Edit` | Shipped guide + schema-verified (0.2.101) |
+| `write` | `Write` | Schema-verified (0.2.101) |
+| `read_file` | `Read` | Shipped guide + schema-verified (0.2.101) |
+| `grep` | `Grep` | Shipped guide + schema-verified (0.2.101) |
+| `list_dir` | `Glob` | Shipped guide + schema-verified (0.2.101) |
+| `web_fetch` | `WebFetch` | Schema-verified (0.2.101) |
+| `web_search` | `WebSearch` | Native name verified; input key **unverified** |
 | unmapped | pass-through | — |
 
 ### Primary match string keys (per canonical tool)
@@ -82,12 +86,13 @@ Tried in order; first present string wins. Empty string is a real value (not a m
 
 | Canonical tool | Candidate keys |
 |----------------|----------------|
-| Bash | `command`, `cmd` |
-| Read / Write / Edit | `file_path`, `path`, `target_file` |
-| Glob | `pattern`, `glob_pattern`, `path` |
-| Grep | `pattern`, `query`, `regex` |
+| Bash | `command` |
+| Read | `target_file` |
+| Write / Edit | `file_path` |
+| Glob | `target_directory` |
+| Grep | `pattern` |
 | WebFetch | `url` |
-| WebSearch | `query`, `search_term` |
+| WebSearch | **Unverified; adapter intentionally extracts no guessed key** |
 
 ## stdout + exit (gatekeeper → harness)
 
