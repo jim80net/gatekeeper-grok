@@ -1,0 +1,12 @@
+on_error = "abstain"
+
+[[rules]]
+tool = "Bash"
+input = '^git push origin main$'
+decision = "deny"
+reason = "Push to protected branch (main/master)"
+
+[[rules]]
+tool = "Bash"
+input = '^git status$'
+decision = "allow"

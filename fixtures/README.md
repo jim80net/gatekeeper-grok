@@ -22,27 +22,34 @@ states that `toolName` is the real native tool name. WebSearch has no input
 fixture: its native name is documented, but its primary input key remains
 unverified without a live hook capture.
 
-## stdout/
+## Executable verdict contract
 
-Adapter **encode** goldens (policy-independent):
-
-| File | Decision | Exit code |
-|------|----------|-----------|
-| `deny.json` | deny | 2 |
-| `allow.json` | allow | 0 |
-| `abstain.empty` | abstain (fail-open) | 1 — **file is empty** |
-
-## Re-canary
+`cases.json` is the single machine-readable truth for each case's input,
+deterministic policy, exact stdout bytes, exit code, and expected Grok behavior.
+Run it against the unified binary:
 
 ```bash
 ./scripts/verify-fixtures.sh
 
-BIN="${BIN:-$HOME/go/bin/claude-gatekeeper}"
-
-# Integration (policy-dependent)
-"$BIN" --harness grok < stdin/pre_tool_use_shell_minimal.json
-echo "exit=$?"
-
-# Adapter unit tests live in gatekeeper-claude until extract:
-#   go test ./internal/adapter/grok/ -count=1
+GATEKEEPER_BIN="${GATEKEEPER_BIN:-$HOME/go/bin/claude-gatekeeper}"
+./scripts/run-conformance.py --binary "$GATEKEEPER_BIN"
 ```
+
+The command exits non-zero on a missing binary, timeout, malformed output, byte
+mismatch, exit-code mismatch, or behavior mismatch. Merely printing an exit code
+is not conformance evidence.
+
+## Negative controls
+
+The sensitivity suite plants the six failure modes required by the 2026-08-03
+audit remediation. Five use a deliberately broken local stub; the
+enforcement-removed case runs the real unified binary against
+`config/no-push-deny.toml`.
+
+```bash
+./tests/negative_controls.py --binary "$GATEKEEPER_BIN"
+```
+
+This test succeeds only after it observes all six bad instruments fail for their
+specified reason. The stubs test runner sensitivity; the positive contract above
+is always judged against the real unified binary.
