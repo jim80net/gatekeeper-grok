@@ -1,0 +1,6 @@
+on_error = "abstain"
+
+[[rules]]
+tool = "Bash"
+input = '^git status$'
+decision = "allow"

@@ -1,0 +1,12 @@
+{
+  "hookEventName": "pre_tool_use",
+  "sessionId": "fixture",
+  "cwd": "/tmp",
+  "workspaceRoot": "/tmp",
+  "toolName": "Shell",
+  "toolInput": {
+    "command": "printf unmatched",
+    "description": "no matching rule canary"
+  },
+  "permissionMode": "bypassPermissions"
+}

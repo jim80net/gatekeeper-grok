@@ -96,13 +96,11 @@ Tried in order; first present string wins. Empty string is a real value (not a m
 
 ## stdout + exit (gatekeeper → harness)
 
-Grok's blocking-hook contract is **native**, not Claude's `hookSpecificOutput`:
-
-| Verdict | stdout | exit code | Grok behaviour |
-|---------|--------|-----------|----------------|
-| **Deny** | `{"decision":"deny","reason":"…"}` | **2** | Tool **blocked** (even under full auto) |
-| **Allow** | `{"decision":"allow"}` | **0** | Tool proceeds as allowed by hook |
-| **Abstain** | *(empty)* | **1** | Fail-open-on-error: **no verdict asserted**; native permission layer decides |
+Grok's blocking-hook contract is **native**, not Claude's
+`hookSpecificOutput`. The exact stdout bytes, exit codes, and resulting harness
+behavior are normative only in the executable
+[`fixtures/cases.json`](../fixtures/cases.json) manifest; this document does not
+duplicate that tuple as a second truth.
 
 ### Why abstain is exit 1 (not silent exit 0)
 
@@ -113,13 +111,15 @@ fail-open** path (non-zero, non-deny) asserts neither allow nor deny.
 **Live probe (2026-07-03):** under `--permission-mode bypassPermissions`,
 deny+exit2 blocked a canary file create; abstain exit1 let a control command run.
 
-### Encode goldens
+### Executable contract
 
-| File | Meaning |
-|------|---------|
-| [`fixtures/stdout/deny.json`](../fixtures/stdout/deny.json) | Deny body (exit 2) |
-| [`fixtures/stdout/allow.json`](../fixtures/stdout/allow.json) | Allow body (exit 0) |
-| [`fixtures/stdout/abstain.empty`](../fixtures/stdout/abstain.empty) | Empty body (exit 1) |
+[`fixtures/cases.json`](../fixtures/cases.json) pins each input, deterministic
+policy, exact stdout bytes, exit code, and expected Grok behavior as one
+machine-readable case. [`scripts/run-conformance.py`](../scripts/run-conformance.py)
+runs those cases against the unified binary and fails on missing binary,
+timeout, malformed or mismatched stdout, exit mismatch, or behavior mismatch.
+[`tests/negative_controls.py`](../tests/negative_controls.py) proves the runner
+detects the six audit-mandated broken instruments.
 
 ### Integration canaries (policy-dependent; 2026-07-10 host)
 
