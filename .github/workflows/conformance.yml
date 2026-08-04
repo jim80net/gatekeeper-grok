@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   pinned-release:
-    name: pinned release v1.5.1
+    name: conformance
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
