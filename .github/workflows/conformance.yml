@@ -1,0 +1,59 @@
+name: Grok conformance
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: grok-conformance-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pinned-release:
+    name: pinned release v1.5.1
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GATEKEEPER_VERSION: "1.5.1"
+      GATEKEEPER_ARCHIVE_SHA256: ab26c07819881df9e5586dfcdcc1e607ccf6d6ae071e11468f266d013300b53e
+    steps:
+      - name: Check out adapter contract
+        uses: actions/checkout@v5
+
+      - name: Install pinned shipped binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/claude-gatekeeper_linux_amd64.tar.gz"
+          install_dir="$RUNNER_TEMP/claude-gatekeeper-${GATEKEEPER_VERSION}"
+          curl --fail --location --retry 3 \
+            --output "$archive" \
+            "https://github.com/jim80net/gatekeeper-claude/releases/download/v${GATEKEEPER_VERSION}/claude-gatekeeper_linux_amd64.tar.gz"
+          printf '%s  %s\n' "$GATEKEEPER_ARCHIVE_SHA256" "$archive" | sha256sum --check --strict
+          mkdir -p "$install_dir"
+          tar -xzf "$archive" -C "$install_dir"
+          binary="$install_dir/bin/claude-gatekeeper"
+          test -x "$binary"
+          printf 'GATEKEEPER_BIN=%s\n' "$binary" >> "$GITHUB_ENV"
+
+      - name: Record and verify tested artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          observed="$($GATEKEEPER_BIN -version 2>&1)"
+          printf 'TESTED_ARTIFACT=%s archive_sha256=%s\n' "$observed" "$GATEKEEPER_ARCHIVE_SHA256"
+          test "$observed" = "claude-gatekeeper $GATEKEEPER_VERSION"
+
+      - name: Verify captured Grok tool shapes
+        run: ./scripts/verify-fixtures.sh
+
+      - name: Run executable wire contract
+        run: ./scripts/run-conformance.py --binary "$GATEKEEPER_BIN"
+
+      - name: Prove all six negative controls bite
+        run: ./tests/negative_controls.py --binary "$GATEKEEPER_BIN"
