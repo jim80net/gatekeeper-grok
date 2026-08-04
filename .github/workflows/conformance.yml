@@ -23,7 +23,7 @@ jobs:
       GATEKEEPER_ARCHIVE_SHA256: ab26c07819881df9e5586dfcdcc1e607ccf6d6ae071e11468f266d013300b53e
     steps:
       - name: Check out adapter contract
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install pinned shipped binary
         shell: bash
@@ -45,7 +45,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          observed="$($GATEKEEPER_BIN -version)"
+          observed="$($GATEKEEPER_BIN -version 2>&1)"
           printf 'TESTED_ARTIFACT=%s archive_sha256=%s\n' "$observed" "$GATEKEEPER_ARCHIVE_SHA256"
           test "$observed" = "claude-gatekeeper $GATEKEEPER_VERSION"
 
