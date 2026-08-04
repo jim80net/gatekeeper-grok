@@ -6,7 +6,7 @@
       "id": "deny_push_to_main",
       "input": "stdin/pre_tool_use_shell_minimal.json",
       "config": "config/enforcing.toml",
-      "expected_stdout_utf8": "{\"decision\":\"deny\",\"reason\":\"Push to protected branch (main/master)\"}\n",
+      "expected_stdout_utf8": "{\"decision\":\"deny\",\"reason\":\"INTENTIONALLY BROKEN CI PROBE\"}\n",
       "expected_exit_code": 2,
       "expected_harness_behavior": "blocked"
     },
